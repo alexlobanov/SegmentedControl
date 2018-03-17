@@ -12,7 +12,7 @@ namespace SegmentedControl.FormsPlugin.Android
 	/// <summary>
 	/// SegmentedControl Renderer
 	/// </summary>
-	public class SegmentedControlRenderer : ViewRenderer<Abstractions.SegmentedControl, RadioGroup>
+    public class SegmentedControlRenderer : ViewRenderer<Abstractions.SegmentedControl, RadioGroup> 
 	{
 		RadioGroup nativeControl;
 		RadioButton _v;
@@ -40,44 +40,69 @@ namespace SegmentedControl.FormsPlugin.Android
 
 			if (e.NewElement != null)
 			{
-				// Configure the control and subscribe to event handlers
-
-				Element.SizeChanged += Element_SizeChanged;
+                // Configure the control and subscribe to event handlers
+                if (Element != null)
+				    Element.SizeChanged += Element_SizeChanged;
 			}
 		}
 
         void Element_SizeChanged (object sender, EventArgs e)
 		{
-	        var layoutInflater = LayoutInflater.From(Forms.Context);
+            try
+            {
+                var layoutInflater = LayoutInflater.From(Forms.Context);
+				if (layoutInflater.Handle == IntPtr.Zero)
+					return;
+                nativeControl = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null);
+				if (nativeControl.Handle == IntPtr.Zero)
+					return;
+                for (var i = 0; i < Element.Children.Count; i++)
+                {
+                    var o = Element.Children[i];
+                    var v = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null);
+					if (v.Handle == IntPtr.Zero)
+						return;
+                    v.LayoutParameters = new RadioGroup.LayoutParams(0, LayoutParams.WrapContent, 1f);
+                    v.Text = o.Text;
 
-			nativeControl = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null);
+                    if (i == 0)
+                        v.SetBackgroundResource(Resource.Drawable.segmented_control_first_background);
+                    else if (i == Element.Children.Count - 1)
+                        v.SetBackgroundResource(Resource.Drawable.segmented_control_last_background);
 
-			for (var i = 0; i < Element.Children.Count; i++)
-			{
-				var o = Element.Children[i];
-				var v = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null);
+                    ConfigureRadioButton(i, v);
+					if (nativeControl.Handle == IntPtr.Zero)
+						return;
+                    nativeControl.AddView(v);
+                }
 
-				v.LayoutParameters = new RadioGroup.LayoutParams(0, LayoutParams.WrapContent, 1f);
-				v.Text = o.Text;
-
-				if (i == 0)
-					v.SetBackgroundResource(Resource.Drawable.segmented_control_first_background);
-				else if (i == Element.Children.Count - 1)
-					v.SetBackgroundResource(Resource.Drawable.segmented_control_last_background);
-
-				ConfigureRadioButton(i, v);
-
-				nativeControl.AddView(v);
+                var option = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
+				if (option.Handle == IntPtr.Zero)
+					return;
+                option.Checked = true;
+				if (nativeControl.Handle == IntPtr.Zero)
+					return;
+                nativeControl.CheckedChange += NativeControl_ValueChanged;
+				if (nativeControl.Handle == IntPtr.Zero)
+					return;
+                SetNativeControl(nativeControl);
+            }
+            catch (ObjectDisposedException ex)
+            {
+				
 			}
-
-			var option = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
-			option.Checked = true;
-
-			nativeControl.CheckedChange += NativeControl_ValueChanged;
-
-			SetNativeControl(nativeControl);
 		}
-
+        public override bool IsInLayout
+        {
+            get
+            {
+                if (nativeControl.Handle == IntPtr.Zero)
+                {
+                    return false;
+                }
+                return base.IsInLayout;
+            }
+        }
 		protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			base.OnElementPropertyChanged(sender, e);
@@ -89,7 +114,10 @@ namespace SegmentedControl.FormsPlugin.Android
 					break;
 				case "SelectedSegment":
 					var option = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
+					if (option.Handle == IntPtr.Zero)
+						return;
                     option.Checked = true;
+
 					Element.ValueChanged?.Invoke(Element, null);
 					break;
 				case "TintColor":
@@ -100,6 +128,8 @@ namespace SegmentedControl.FormsPlugin.Android
 					break;
 				case "SelectedTextColor":
                     var v = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
+					if (v.Handle == IntPtr.Zero)
+						return;
 					v.SetTextColor(Element.SelectedTextColor.ToAndroid());
 					break;
 			}
@@ -110,7 +140,8 @@ namespace SegmentedControl.FormsPlugin.Android
 			for (var i = 0; i < Element.Children.Count; i++)
 			{
 				var v = (RadioButton)nativeControl.GetChildAt(i);
-
+                if (v.Handle == IntPtr.Zero)
+                    return;
 				ConfigureRadioButton(i, v);
 			}
 		}
@@ -170,25 +201,31 @@ namespace SegmentedControl.FormsPlugin.Android
 
 		protected override void Dispose(bool disposing)
 		{
-			if (nativeControl != null)
-			{
-				nativeControl.CheckedChange -= NativeControl_ValueChanged;
-				nativeControl.Dispose();
-				nativeControl = null;
-				_v = null;
-			}
-
-			if (Element != null)
-				Element.SizeChanged -= Element_SizeChanged;
-
 			try
 			{
+                if ((nativeControl != null) && (nativeControl.Handle != IntPtr.Zero))
+                {
+                    nativeControl.CheckedChange -= NativeControl_ValueChanged;
+                }
+                if (Element != null)
+                {
+                    Element.SizeChanged -= Element_SizeChanged;
+                }
 				base.Dispose(disposing);
 			}
 			catch (Exception ex)
 			{
 				return;
 			}
+            try
+            {
+                _v.Dispose();
+                _v = null;
+            }
+            catch (Exception ex){
+                
+            }
+			
 		}
         /// <summary>
         /// Used for registration with dependency service
