@@ -79,9 +79,50 @@ public void Handle_ValueChanged(object o, int e)
 #### Roadmap
 
 * Change font family/size
-* UWP support
 
 #### Release Notes
+
+2.0.1
+
+[Android] Segmented Control Not Displaying on Second Page #71
+
+2.0.0
+
+[Update] Adding support for netstandard2.0
+
+[Update] Adding support for UWP
+
+[Update] Adding DisabledColor bindable property
+
+1.3.4
+
+[Android] Setting SelectedSegment to -1 to clear selection throws error in Android #61
+
+[Update] Changing ValueChanged to event to make it available from XAML
+
+1.3.3
+
+[Update] Adding support for no segment selected
+
+[Update] Preventing crashes OnElementPropertyChanged because Element or NativeControl are null.
+
+1.3.2
+
+[Android] Segmented Control Not Displaying on Second Page #51
+
+[Android] About 150 warnings about resources #50
+
+[Android] Android package incompatible with latest Xamarin Forms #48
+
+[Android] Segmented Control Not rendering in Android #46
+
+[Android] Late instantiation of the RadioGroup control in the Android renderer fails to display bug #45
+
+[Android] Object Disposed Exception. Crash. Android only #44
+
+[Android] Segmented control changed displaying inside Grid #42
+
+[Update] Doesn't work with Xamarin.Forms Previewer #49
 
 1.3.1
 

@@ -5,6 +5,7 @@ using Xamarin.Forms.Platform.Android;
 using Android.Widget;
 using Android.Views;
 using Android.Graphics.Drawables;
+using Android.Content;
 
 [assembly: ExportRenderer(typeof(SegmentedControl.FormsPlugin.Abstractions.SegmentedControl), typeof(SegmentedControlRenderer))]
 namespace SegmentedControl.FormsPlugin.Android
@@ -15,16 +16,59 @@ namespace SegmentedControl.FormsPlugin.Android
     public class SegmentedControlRenderer : ViewRenderer<Abstractions.SegmentedControl, RadioGroup> 
 	{
 		RadioGroup nativeControl;
-		RadioButton _v;
+		RadioButton _rb;
+        Context context;
+
+        public SegmentedControlRenderer(Context context) : base(context)
+        {
+            this.context = context;
+        }
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Abstractions.SegmentedControl> e)
 		{
 			base.OnElementChanged(e);
 
 			if (Control == null)
+<<<<<<< HEAD
 			{
 				// Instantiate the native control and assign it to the Control property with
 				// the SetNativeControl method
+=======
+			{
+                // Instantiate the native control and assign it to the Control property with
+                // the SetNativeControl method
+
+                var layoutInflater = LayoutInflater.From(context);
+
+                var view = layoutInflater.Inflate(Resource.Layout.RadioGroup, null);
+
+                nativeControl = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null);
+
+                for (var i = 0; i < Element.Children.Count; i++)
+                {
+                    var o = Element.Children[i];
+                    var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null);
+
+                    rb.LayoutParameters = new RadioGroup.LayoutParams(0, LayoutParams.WrapContent, 1f);
+                    rb.Text = o.Text;
+
+                    if (i == 0)
+                        rb.SetBackgroundResource(Resource.Drawable.segmented_control_first_background);
+                    else if (i == Element.Children.Count - 1)
+                        rb.SetBackgroundResource(Resource.Drawable.segmented_control_last_background);
+
+                    ConfigureRadioButton(i, rb);
+
+                    nativeControl.AddView(rb);
+                }
+
+                var option = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
+
+                if (option != null)
+                    option.Checked = true;
+
+                SetNativeControl(nativeControl);
+>>>>>>> upstream/master
 			}
 
 			if (e.OldElement != null)
@@ -33,13 +77,11 @@ namespace SegmentedControl.FormsPlugin.Android
 
 				if (nativeControl != null)
 					nativeControl.CheckedChange -= NativeControl_ValueChanged;
-
-				if (Element != null)
-					Element.SizeChanged -= Element_SizeChanged;
 			}
 
 			if (e.NewElement != null)
 			{
+<<<<<<< HEAD
                 // Configure the control and subscribe to event handlers
                 if (Element != null)
 				    Element.SizeChanged += Element_SizeChanged;
@@ -91,6 +133,12 @@ namespace SegmentedControl.FormsPlugin.Android
             {
 				
 			}
+=======
+				// Configure the control and subscribe to event handlers
+
+                nativeControl.CheckedChange += NativeControl_ValueChanged;
+			}
+>>>>>>> upstream/master
 		}
         public override bool IsInLayout
         {
@@ -107,18 +155,58 @@ namespace SegmentedControl.FormsPlugin.Android
 		{
 			base.OnElementPropertyChanged(sender, e);
 
+            if (nativeControl == null || Element == null) return;
+
 			switch (e.PropertyName)
 			{
 				case "Renderer":
-					Element.ValueChanged?.Invoke(Element, null);
+                    Element?.SendValueChanged();
 					break;
 				case "SelectedSegment":
+<<<<<<< HEAD
 					var option = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
 					if (option.Handle == IntPtr.Zero)
 						return;
                     option.Checked = true;
 
 					Element.ValueChanged?.Invoke(Element, null);
+=======
+                    var option = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
+						
+                    if (option != null)
+						option.Checked = true;
+
+                    if (Element.SelectedSegment < 0)
+                    {
+                        var layoutInflater = LayoutInflater.From(context);
+
+						nativeControl = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null);
+
+						for (var i = 0; i < Element.Children.Count; i++)
+						{
+							var o = Element.Children[i];
+                            var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null);
+
+							rb.LayoutParameters = new RadioGroup.LayoutParams(0, LayoutParams.WrapContent, 1f);
+							rb.Text = o.Text;
+
+							if (i == 0)
+								rb.SetBackgroundResource(Resource.Drawable.segmented_control_first_background);
+							else if (i == Element.Children.Count - 1)
+								rb.SetBackgroundResource(Resource.Drawable.segmented_control_last_background);
+
+							ConfigureRadioButton(i, rb);
+
+							nativeControl.AddView(rb);
+						}
+
+						nativeControl.CheckedChange += NativeControl_ValueChanged;
+
+						SetNativeControl(nativeControl);
+                    }
+
+					Element.SendValueChanged();
+>>>>>>> upstream/master
 					break;
 				case "TintColor":
                     OnPropertyChanged();
@@ -128,15 +216,20 @@ namespace SegmentedControl.FormsPlugin.Android
 					break;
 				case "SelectedTextColor":
                     var v = (RadioButton)nativeControl.GetChildAt(Element.SelectedSegment);
+<<<<<<< HEAD
 					if (v.Handle == IntPtr.Zero)
 						return;
 					v.SetTextColor(Element.SelectedTextColor.ToAndroid());
+=======
+                    v.SetTextColor(Element.SelectedTextColor.ToAndroid());
+>>>>>>> upstream/master
 					break;
 			}
 		}
 
 		void OnPropertyChanged()
 		{
+<<<<<<< HEAD
 			for (var i = 0; i < Element.Children.Count; i++)
 			{
 				var v = (RadioButton)nativeControl.GetChildAt(i);
@@ -144,25 +237,36 @@ namespace SegmentedControl.FormsPlugin.Android
                     return;
 				ConfigureRadioButton(i, v);
 			}
+=======
+            if (nativeControl != null && Element != null)
+            {
+                for (var i = 0; i < Element.Children.Count; i++)
+                {
+                    var rb = (RadioButton)nativeControl.GetChildAt(i);
+
+                    ConfigureRadioButton(i, rb);
+                }
+            }
+>>>>>>> upstream/master
 		}
 
-		void ConfigureRadioButton(int i, RadioButton v)
+		void ConfigureRadioButton(int i, RadioButton rb)
 		{
 			if (i == Element.SelectedSegment)
 			{
-				v.SetTextColor(Element.SelectedTextColor.ToAndroid());
-				_v = v;
+                rb.SetTextColor(Element.SelectedTextColor.ToAndroid());
+				_rb = rb;
 			}
 			else
 			{
-				var textColor = Element.IsEnabled ? Element.TintColor.ToAndroid() : Color.Gray.ToAndroid();
-				v.SetTextColor(textColor);
+                var textColor = Element.IsEnabled ? Element.TintColor.ToAndroid() : Element.DisabledColor.ToAndroid();
+				rb.SetTextColor(textColor);
 			}
 
 			GradientDrawable selectedShape;
 			GradientDrawable unselectedShape;
 
-			var gradientDrawable = (StateListDrawable)v.Background;
+			var gradientDrawable = (StateListDrawable)rb.Background;
 			var drawableContainerState = (DrawableContainer.DrawableContainerState)gradientDrawable.GetConstantState();
 			var children = drawableContainerState.GetChildren();
 
@@ -170,13 +274,13 @@ namespace SegmentedControl.FormsPlugin.Android
 			selectedShape = children[0] is GradientDrawable? (GradientDrawable)children[0] : (GradientDrawable)((InsetDrawable)children[0]).Drawable;
 			unselectedShape = children[1] is GradientDrawable? (GradientDrawable)children[1] : (GradientDrawable)((InsetDrawable)children[1]).Drawable;
 
-			var color = Element.IsEnabled ? Element.TintColor.ToAndroid() : Color.Gray.ToAndroid();
+            var color = Element.IsEnabled ? Element.TintColor.ToAndroid() : Element.DisabledColor.ToAndroid();
 
 			selectedShape.SetStroke(3, color);
 			selectedShape.SetColor(color);
 			unselectedShape.SetStroke(3, color);
 
-			v.Enabled = Element.IsEnabled;
+			rb.Enabled = Element.IsEnabled;
 		}
 
 		void NativeControl_ValueChanged(object sender, RadioGroup.CheckedChangeEventArgs e)
@@ -188,12 +292,12 @@ namespace SegmentedControl.FormsPlugin.Android
 				var radioButton = rg.FindViewById(id);
 				var radioId = rg.IndexOfChild(radioButton);
 
-				var v = (RadioButton)rg.GetChildAt(radioId);
+                var rb = (RadioButton)rg.GetChildAt(radioId);
 
-				var color = Element.IsEnabled ? Element.TintColor.ToAndroid() : Color.Gray.ToAndroid();
-				_v.SetTextColor(color);
-				v.SetTextColor(Element.SelectedTextColor.ToAndroid());
-				_v = v;
+                var color = Element.IsEnabled ? Element.TintColor.ToAndroid() : Element.DisabledColor.ToAndroid();
+				_rb?.SetTextColor(color);
+				rb.SetTextColor(Element.SelectedTextColor.ToAndroid());
+                _rb = rb;
 
 				Element.SelectedSegment = radioId;
 			}
@@ -203,6 +307,7 @@ namespace SegmentedControl.FormsPlugin.Android
 		{
 			try
 			{
+<<<<<<< HEAD
                 if ((nativeControl != null) && (nativeControl.Handle != IntPtr.Zero))
                 {
                     nativeControl.CheckedChange -= NativeControl_ValueChanged;
@@ -216,6 +321,21 @@ namespace SegmentedControl.FormsPlugin.Android
 			catch (Exception ex)
 			{
 				return;
+=======
+				nativeControl.CheckedChange -= NativeControl_ValueChanged;
+				nativeControl.Dispose();
+				nativeControl = null;
+				_rb = null;
+			}
+
+			try
+			{
+				base.Dispose(disposing);
+			}
+			catch (Exception ex)
+			{
+				return;
+>>>>>>> upstream/master
 			}
             try
             {
