@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 
 namespace Demo
 {
-    public partial class SecondPage : ContentPage
+	public partial class SecondPage : ContentPage
     {
-        public SecondPage()
+		public ContentPageViewModel viewModel { get; set; }
+
+		public SecondPage()
         {
             InitializeComponent();
-
+			this.BindingContext = viewModel = new ContentPageViewModel();;
             Title = "Second Page";
+        }
+
+		protected override void OnAppearing()
+        {
+			viewModel.IsVisibleSegment = false;
+            base.OnAppearing();
         }
 
         void Handle_ValueChanged(object sender, SegmentedControl.FormsPlugin.Abstractions.ValueChangedEventArgs e)
@@ -36,5 +45,12 @@ namespace Demo
                     break;
             }
         }
-    }
+
+		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			base.OnPropertyChanged(propertyName);
+		}
+
+
+	}
 }

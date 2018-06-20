@@ -10,12 +10,14 @@
                  Spacing="12">
         <controls:SegmentedControl x:Name="SegControl" ValueChanged="Handle_ValueChanged">
             <controls:SegmentedControl.Children>
-                <controls:SegmentedControlOption Text="Items" />
-                <controls:SegmentedControlOption Text="Notes" />
+                <controls:SegmentedControlOption Text="Items" IsEnabled="{Binding IsEnableSegment}"/>
+                <controls:SegmentedControlOption Text="Notes" IsVisible="{Binding IsVisibleSegment}" />
                 <controls:SegmentedControlOption Text="Approvers" />
                 <controls:SegmentedControlOption Text="Attachments" />
             </controls:SegmentedControl.Children>
         </controls:SegmentedControl>
         <StackLayout x:Name="SegContent" />
+        <Button Text="Change IsVisible State for Second Segment" Command="{Binding  ChangeIsVisibleSegmentCommand}" />
+        <Button Text="Change IsEnable State for First Segment" Command="{Binding ChangeIsEnableSegmentCommand}" />
     </StackLayout>
 </ContentPage>

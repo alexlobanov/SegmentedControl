@@ -3,6 +3,9 @@ using Xamarin.Forms;
 using SegmentedControl.FormsPlugin.iOS;
 using Xamarin.Forms.Platform.iOS;
 using UIKit;
+using SegmentedControl.FormsPlugin.Abstractions;
+using System.Collections.Generic;
+using System.Linq;
 
 [assembly: ExportRenderer(typeof(SegmentedControl.FormsPlugin.Abstractions.SegmentedControl), typeof(SegmentedControlRenderer))]
 namespace SegmentedControl.FormsPlugin.iOS
@@ -12,7 +15,8 @@ namespace SegmentedControl.FormsPlugin.iOS
 	/// </summary>
 	public class SegmentedControlRenderer : ViewRenderer<Abstractions.SegmentedControl, UISegmentedControl>
 	{
-		UISegmentedControl nativeControl;
+		UISegmentedControl nativeControl;      
+       
 
 		protected override void OnElementChanged(ElementChangedEventArgs<Abstractions.SegmentedControl> e)
 		{
@@ -22,20 +26,8 @@ namespace SegmentedControl.FormsPlugin.iOS
 			{
 				// Instantiate the native control and assign it to the Control property with
 				// the SetNativeControl method
-
-				nativeControl = new UISegmentedControl();
-
-				for (var i = 0; i<Element.Children.Count; i++)
-				{
-					nativeControl.InsertSegment(Element.Children[i].Text, i, false);
-				}
-
-				nativeControl.Enabled = Element.IsEnabled;
-                nativeControl.TintColor = Element.IsEnabled? Element.TintColor.ToUIColor() : Element.DisabledColor.ToUIColor();
-				SetSelectedTextColor();
-
-				nativeControl.SelectedSegment = Element.SelectedSegment;
-
+				nativeControl = CreateNativeSegmentedControl();
+				SetSelectedTextColor();         
 				SetNativeControl(nativeControl);
 			}
 
@@ -44,16 +36,57 @@ namespace SegmentedControl.FormsPlugin.iOS
 				// Unsubscribe from event handlers and cleanup any resources
 
 				if (nativeControl != null)
-				    nativeControl.ValueChanged -= NativeControl_ValueChanged;
+				{
+					nativeControl.ValueChanged -= NativeControl_ValueChanged;
+				}
+				e.NewElement.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;            
 			}
 
 			if (e.NewElement != null)
 			{
 				// Configure the control and subscribe to event handlers
 
-				nativeControl.ValueChanged += NativeControl_ValueChanged;
+				e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
+				nativeControl.ValueChanged += NativeControl_ValueChanged;       
 			}
 		}
+
+		private UISegmentedControl CreateNativeSegmentedControl()
+		{
+			var nativeSegmentControl = new UISegmentedControl();
+
+			for (var i = 0; i < Element.Children.Count; i++)
+			{
+				var segmentedControlOption = Element.Children[i] as SegmentedControlOption;
+				if (segmentedControlOption == null)
+					continue;
+				var visibleEnable = segmentedControlOption.IsVisible && segmentedControlOption.IsEnabled;
+				nativeSegmentControl.InsertSegment(segmentedControlOption.Text, i, false);
+				nativeSegmentControl.SetEnabled(visibleEnable, i);                  
+			}
+
+			nativeSegmentControl.Enabled = Element.IsEnabled;
+			nativeSegmentControl.TintColor = Element.IsEnabled ? Element.TintColor.ToUIColor() : Element.DisabledColor.ToUIColor();
+			nativeSegmentControl.SelectedSegment = Element.SelectedSegment;
+			return nativeSegmentControl;
+		}
+
+		protected void SegmentedChildrenPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+            {
+                case "IsVisible":
+				case "IsEnabled":
+                    for (var i = 0; i < Element.Children.Count; i++)
+                    {
+                        var segmentedControlOption = Element.Children[i] as SegmentedControlOption;                  
+						var visibleEnable = segmentedControlOption.IsVisible && segmentedControlOption.IsEnabled;
+						nativeControl.SetEnabled(visibleEnable, i);                  
+                    }
+                    break;      
+            }
+		}
+
 
 		protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -85,6 +118,7 @@ namespace SegmentedControl.FormsPlugin.iOS
 
 		}
 
+
 		void SetSelectedTextColor()
 		{
 			var attr = new UITextAttributes();
@@ -101,7 +135,7 @@ namespace SegmentedControl.FormsPlugin.iOS
 		{
 			if (nativeControl != null)
 			{
-				nativeControl.ValueChanged -= NativeControl_ValueChanged;
+				nativeControl.ValueChanged -= NativeControl_ValueChanged;                        
 				nativeControl.Dispose();
 				nativeControl = null;
 			}
