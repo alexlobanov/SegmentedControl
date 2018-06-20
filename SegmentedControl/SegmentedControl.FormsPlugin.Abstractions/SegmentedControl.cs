@@ -93,6 +93,7 @@ namespace SegmentedControl.FormsPlugin.Abstractions
 			base.OnPropertyChanged(propertyName);         
 			switch (propertyName)
 			{
+				case "Text":
 				case "IsEnabled":
 				case "IsVisible":
 					var parentView = this.Parent as SegmentedControl;

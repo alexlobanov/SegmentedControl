@@ -88,6 +88,16 @@ namespace SegmentedControl.FormsPlugin.Android
         {
             switch (e.PropertyName)
             {
+				case "Text":
+					for (var i = 0; i < Element.Children.Count; i++)
+                    {
+						var segmentedControlOption = Element.Children[i] as SegmentedControlOption;
+						var childView = nativeControl.GetChildAt(i) as RadioButton;
+						if ((segmentedControlOption == null) || (childView == null))
+                            continue;
+						childView.Text = segmentedControlOption.Text;
+                    }
+					break;
                 case "IsVisible":
 					for (var i = 0; i < Element.Children.Count; i++)
 					{
@@ -251,7 +261,7 @@ namespace SegmentedControl.FormsPlugin.Android
             }
 			if (Element != null)
 			{
-				Element.ValueChanged -= SegmentedChildrenPropertyChanged;
+				Element.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;
 			}
 
             try

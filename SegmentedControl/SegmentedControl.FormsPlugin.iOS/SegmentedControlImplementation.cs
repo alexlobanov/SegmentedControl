@@ -75,6 +75,15 @@ namespace SegmentedControl.FormsPlugin.iOS
 		{
 			switch (e.PropertyName)
             {
+				case "Text":
+					for (var i = 0; i < Element.Children.Count; i++)
+					{
+						var segmentedControlOption = Element.Children[i] as SegmentedControlOption;
+						if (segmentedControlOption == null)
+							continue;
+						nativeControl.SetTitle(segmentedControlOption.Text, i);    
+					}
+					break;
                 case "IsVisible":
 				case "IsEnabled":
                     for (var i = 0; i < Element.Children.Count; i++)

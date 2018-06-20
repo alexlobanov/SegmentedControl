@@ -10,7 +10,7 @@
                  Spacing="12">
         <controls:SegmentedControl x:Name="SegControl" ValueChanged="Handle_ValueChanged">
             <controls:SegmentedControl.Children>
-                <controls:SegmentedControlOption Text="Items" IsEnabled="{Binding IsEnableSegment}"/>
+                <controls:SegmentedControlOption Text="{Binding Text}" IsEnabled="{Binding IsEnableSegment}"/>
                 <controls:SegmentedControlOption Text="Notes" IsVisible="{Binding IsVisibleSegment}" />
                 <controls:SegmentedControlOption Text="Approvers" />
                 <controls:SegmentedControlOption Text="Attachments" />

@@ -8,9 +8,22 @@ namespace Demo
 	{
 		private bool isVisibleSegment = false;      
 		private bool isEnableSegment = false;
+		private string text = "Disabled";
 
 		public Command ChangeIsVisibleSegmentCommand { get; protected set; }
 		public Command ChangeIsEnableSegmentCommand { get; protected set; }
+
+
+		public string Text 
+		{
+			get => text;
+            set
+            {
+				text = value;
+				OnPropertyChanged(nameof(Text));
+            }
+		}
+
 
 		public bool IsVisibleSegment
 		{
@@ -43,6 +56,7 @@ namespace Demo
 		protected void ChangeIsEnableSegment()
 		{
 			IsEnableSegment = !IsEnableSegment;
+			Text = IsEnableSegment ? "Enabled" : "Disabled";
 		}
 
 
