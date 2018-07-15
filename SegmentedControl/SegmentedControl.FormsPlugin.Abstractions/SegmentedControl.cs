@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -8,111 +7,106 @@ using Xamarin.Forms;
 namespace SegmentedControl.FormsPlugin.Abstractions
 {
     /// <summary>
-    /// SegmentedControl Interface
+    ///     SegmentedControl Interface
     /// </summary>
-	public class SegmentedControl : Layout<View>
-	{
+    public class SegmentedControl : Layout<View>
+    {
+        public static readonly BindableProperty TintColorProperty =
+            BindableProperty.Create("TintColor", typeof(Color), typeof(SegmentedControl), Color.Blue);
 
-		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			Debug.WriteLine("Root: " + propertyName);
-			base.OnPropertyChanged(propertyName);
-		}
+        public static readonly BindableProperty DisabledColorProperty =
+            BindableProperty.Create("DisabledColor", typeof(Color), typeof(SegmentedControl), Color.Gray);
 
-		public static readonly BindableProperty TintColorProperty = BindableProperty.Create("TintColor", typeof(Color), typeof(SegmentedControl), Color.Blue);
+        public static readonly BindableProperty SelectedTextColorProperty =
+            BindableProperty.Create("SelectedTextColor", typeof(Color), typeof(SegmentedControl), Color.White);
 
-		public Color TintColor
-		{
-			get { return (Color)GetValue(TintColorProperty); }
-			set { SetValue(TintColorProperty, value); }
-		}
+        public static readonly BindableProperty SelectedSegmentProperty =
+            BindableProperty.Create("SelectedSegment", typeof(int), typeof(SegmentedControl), 0);
 
-        public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create("DisabledColor", typeof(Color), typeof(SegmentedControl), Color.Gray);
+        public Color TintColor
+        {
+            get => (Color) GetValue(TintColorProperty);
+            set => SetValue(TintColorProperty, value);
+        }
 
         public Color DisabledColor
         {
-            get { return (Color)GetValue(DisabledColorProperty); }
-            set { SetValue(DisabledColorProperty, value); }
+            get => (Color) GetValue(DisabledColorProperty);
+            set => SetValue(DisabledColorProperty, value);
         }
 
-		public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create("SelectedTextColor", typeof(Color), typeof(SegmentedControl), Color.White);
-
-		public Color SelectedTextColor
-		{
-			get { return (Color)GetValue(SelectedTextColorProperty); }
-			set { SetValue(SelectedTextColorProperty, value); }
-		}
-
-		public static readonly BindableProperty SelectedSegmentProperty = BindableProperty.Create("SelectedSegment", typeof(int), typeof(SegmentedControl), 0);
-
-		public int SelectedSegment
-		{
-			get { 
-				return (int)GetValue(SelectedSegmentProperty); 
-			}
-			set { 
-				SetValue(SelectedSegmentProperty, value);
-			}
-		}
-	
-		public event EventHandler<ValueChangedEventArgs> ValueChanged;      
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler<PropertyChangedEventArgs> ChildrenPropertyChanged;
-       
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendChinldenPropertyChanged(string property)
+        public Color SelectedTextColor
         {
-			ChildrenPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            get => (Color) GetValue(SelectedTextColorProperty);
+            set => SetValue(SelectedTextColorProperty, value);
         }
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendValueChanged()
-		{
-            ValueChanged?.Invoke(this, new ValueChangedEventArgs { NewValue = this.SelectedSegment });
-		}
+        public int SelectedSegment
+        {
+            get => (int) GetValue(SelectedSegmentProperty);
+            set => SetValue(SelectedSegmentProperty, value);
+        }
 
-		protected override void LayoutChildren(double x, double y, double width, double height)
-		{
-			for (var i = 0; i < Children.Count; i++)
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+        }
+
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public event EventHandler<PropertyChangedEventArgs> ChildrenPropertyChanged;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void SendChinldenPropertyChanged(string property)
+        {
+            ChildrenPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void SendValueChanged()
+        {
+            ValueChanged?.Invoke(this, new ValueChangedEventArgs {NewValue = SelectedSegment});
+        }
+
+        protected override void LayoutChildren(double x, double y, double width, double height)
+        {
+            for (var i = 0; i < Children.Count; i++)
             {
-				var child = (View)Children[i];
+                var child = Children[i];
                 if (child.IsVisible)
-					LayoutChildIntoBoundingRegion(child, Rectangle.Zero);
+                    LayoutChildIntoBoundingRegion(child, Rectangle.Zero);
             }
-		}
-	}
+        }
+    }
 
-	public class SegmentedControlOption : View
-	{
-		public static readonly BindableProperty TextProperty = BindableProperty.Create("Text", typeof(string), typeof(SegmentedControlOption), string.Empty);
+    public class SegmentedControlOption : View
+    {
+        public static readonly BindableProperty TextProperty =
+            BindableProperty.Create("Text", typeof(string), typeof(SegmentedControlOption), string.Empty);
 
-		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			Debug.WriteLine("Children: " + propertyName);
-			base.OnPropertyChanged(propertyName);         
-			switch (propertyName)
-			{
-				case "Text":
-				case "IsEnabled":
-				case "IsVisible":
-					var parentView = this.Parent as SegmentedControl;
-					if (parentView != null)
-					{
-						parentView.SendChinldenPropertyChanged(propertyName);                  
-					}
-					break;
-			}
-		}
+        public string Text
+        {
+            get => (string) GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
 
-		public string Text
-		{
-			get { return (string)GetValue(TextProperty); }
-			set { SetValue(TextProperty, value); }
-		}
-	}
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+            switch (propertyName)
+            {
+                case "Text":
+                case "IsEnabled":
+                case "IsVisible":
+                    var parentView = Parent as SegmentedControl;
+                    if (parentView != null) parentView.SendChinldenPropertyChanged(propertyName);
+                    break;
+            }
+        }
+    }
 
-	public class ValueChangedEventArgs : EventArgs
+    public class ValueChangedEventArgs : EventArgs
     {
         public int NewValue { get; set; }
     }

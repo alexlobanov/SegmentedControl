@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    x:Class="Demo.MainPage"
-    xmlns:controls="clr-namespace:SegmentedControl.FormsPlugin.Abstractions;assembly=SegmentedControl.FormsPlugin.Abstractions"
-    xmlns:local="clr-namespace:Demo;assembly=Demo">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Demo.MainPage"
+             xmlns:controls="clr-namespace:SegmentedControl.FormsPlugin.Abstractions;assembly=SegmentedControl.FormsPlugin.Abstractions"
+             xmlns:local="clr-namespace:Demo;assembly=Demo">
 
     <StackLayout x:Name="segContainer"
                  Padding="12"
@@ -18,5 +19,5 @@
         </controls:SegmentedControl>
         <StackLayout x:Name="SegContent" />
     </StackLayout>
-    
+
 </ContentPage>

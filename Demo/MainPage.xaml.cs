@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using SegmentedControl.FormsPlugin.Abstractions;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
+using ValueChangedEventArgs = SegmentedControl.FormsPlugin.Abstractions.ValueChangedEventArgs;
 
 namespace Demo
 {
@@ -14,30 +11,29 @@ namespace Demo
 
             Title = "Segmented Control";
 
-            ToolbarItems.Add(new ToolbarItem() { Text = "Navigate", Command = new Command((obj) => {
-                Navigation.PushAsync(new SecondPage());
-            })});
+            ToolbarItems.Add(new ToolbarItem
+                {Text = "Navigate", Command = new Command(obj => { Navigation.PushAsync(new SecondPage()); })});
         }
 
-        void Handle_ValueChanged(object sender, SegmentedControl.FormsPlugin.Abstractions.ValueChangedEventArgs e)
+        private void Handle_ValueChanged(object sender, ValueChangedEventArgs e)
         {
             switch (e.NewValue)
             {
                 case 0:
                     SegContent.Children.Clear();
-                    SegContent.Children.Add(new Label() { Text = "Items tab selected" });
+                    SegContent.Children.Add(new Label {Text = "Items tab selected"});
                     break;
                 case 1:
                     SegContent.Children.Clear();
-                    SegContent.Children.Add(new Label() { Text = "Notes tab selected" });
+                    SegContent.Children.Add(new Label {Text = "Notes tab selected"});
                     break;
                 case 2:
                     SegContent.Children.Clear();
-                    SegContent.Children.Add(new Label() { Text = "Approvers tab selected" });
+                    SegContent.Children.Add(new Label {Text = "Approvers tab selected"});
                     break;
                 case 3:
                     SegContent.Children.Clear();
-                    SegContent.Children.Add(new Label() { Text = "Attachments tab selected" });
+                    SegContent.Children.Add(new Label {Text = "Attachments tab selected"});
                     break;
             }
         }

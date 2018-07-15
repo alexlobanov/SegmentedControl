@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="Demo.SecondPage"
-    xmlns:controls="clr-namespace:SegmentedControl.FormsPlugin.Abstractions;assembly=SegmentedControl.FormsPlugin.Abstractions"
-    xmlns:local="clr-namespace:Demo;assembly=Demo">
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Demo.SecondPage"
+             xmlns:controls="clr-namespace:SegmentedControl.FormsPlugin.Abstractions;assembly=SegmentedControl.FormsPlugin.Abstractions"
+             xmlns:local="clr-namespace:Demo;assembly=Demo">
 
     <StackLayout x:Name="segContainer"
                  Padding="12"
                  Spacing="12">
         <controls:SegmentedControl x:Name="SegControl" ValueChanged="Handle_ValueChanged">
             <controls:SegmentedControl.Children>
-                <controls:SegmentedControlOption Text="{Binding Text}" IsEnabled="{Binding IsEnableSegment}"/>
+                <controls:SegmentedControlOption Text="{Binding Text}" IsEnabled="{Binding IsEnableSegment}" />
                 <controls:SegmentedControlOption Text="Notes" IsVisible="{Binding IsVisibleSegment}" />
                 <controls:SegmentedControlOption Text="Approvers" />
                 <controls:SegmentedControlOption Text="Attachments" />
