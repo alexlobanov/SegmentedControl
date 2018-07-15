@@ -31,7 +31,15 @@ namespace SegmentedControl.FormsPlugin.iOS
 				SetNativeControl(nativeControl);
 			}
 
-			if (e.OldElement != null)
+            if ((e.OldElement == null) && (e.NewElement != null)) //new control
+            {
+                // Configure the control and subscribe to event handlers
+
+                e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
+                nativeControl.ValueChanged += NativeControl_ValueChanged;
+            }
+
+            if ((e.OldElement != null) && (e.NewElement == null)) //remove control
 			{
 				// Unsubscribe from event handlers and cleanup any resources
 
@@ -39,15 +47,7 @@ namespace SegmentedControl.FormsPlugin.iOS
 				{
 					nativeControl.ValueChanged -= NativeControl_ValueChanged;
 				}
-				e.NewElement.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;            
-			}
-
-			if (e.NewElement != null)
-			{
-				// Configure the control and subscribe to event handlers
-
-				e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
-				nativeControl.ValueChanged += NativeControl_ValueChanged;       
+                e.OldElement.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;            
 			}
 		}
 
@@ -153,7 +153,7 @@ namespace SegmentedControl.FormsPlugin.iOS
 			{
 				base.Dispose(disposing);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				return;
 			}

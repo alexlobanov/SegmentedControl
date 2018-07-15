@@ -41,21 +41,20 @@ namespace SegmentedControl.FormsPlugin.Android
 				SetNativeControl(nativeControl);
 			}
 
-			if (e.OldElement != null)
+            if ((e.NewElement != null) && (e.OldElement == null))
+            {
+                // Configure the control and subscribe to event handlers
+                e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
+                nativeControl.CheckedChange += NativeControl_ValueChanged;
+            }
+
+            if ((e.OldElement != null) && (e.NewElement == null))
             {
                 // Unsubscribe from event handlers and cleanup any resources
 
                 if (nativeControl != null)
                     nativeControl.CheckedChange -= NativeControl_ValueChanged;
-				e.NewElement.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;
-               
-            }
-
-            if (e.NewElement != null)
-            {
-                // Configure the control and subscribe to event handlers
-				e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
-                nativeControl.CheckedChange += NativeControl_ValueChanged;
+                e.OldElement.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;
             }
         }
 
