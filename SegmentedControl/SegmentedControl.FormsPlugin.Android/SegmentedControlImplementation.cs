@@ -45,7 +45,8 @@ namespace SegmentedControl.FormsPlugin.Android
             {
                 // Configure the control and subscribe to event handlers
                 e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
-                nativeControl.CheckedChange += NativeControl_ValueChanged;
+                if (nativeControl != null)
+                    nativeControl.CheckedChange += NativeControl_ValueChanged;
             }
 
             if ((e.OldElement != null) && (e.NewElement == null))

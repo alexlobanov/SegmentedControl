@@ -36,17 +36,15 @@ namespace SegmentedControl.FormsPlugin.iOS
                 // Configure the control and subscribe to event handlers
 
                 e.NewElement.ChildrenPropertyChanged += SegmentedChildrenPropertyChanged;
-                nativeControl.ValueChanged += NativeControl_ValueChanged;
+                if (nativeControl != null)
+                    nativeControl.ValueChanged += NativeControl_ValueChanged;
             }
 
             if ((e.OldElement != null) && (e.NewElement == null)) //remove control
 			{
 				// Unsubscribe from event handlers and cleanup any resources
-
 				if (nativeControl != null)
-				{
 					nativeControl.ValueChanged -= NativeControl_ValueChanged;
-				}
                 e.OldElement.ChildrenPropertyChanged -= SegmentedChildrenPropertyChanged;            
 			}
 		}
